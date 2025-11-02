@@ -1,53 +1,78 @@
-Project Title
+🌟 Stellar Mini Escrow — Soroban Smart Contract
 
-Cross-Border Remittance DApp
+A minimal, auditable escrow primitive built for the Stellar Cross-Border Remittance DApp (testnet prototype) — purposefully simple, safe, and ready to integrate with a frontend using Soroban.
+
+📚 Table of Contents
+
+Project Title
 
 Project Description
 
-This repository contains a minimal Soroban smart contract that implements an on-chain escrow registry for the Stellar Cross-Border Remittance DApp (testnet prototype).
-The contract stores simple escrow records (id, sender, receiver, amount, completed flag) and exposes functions to create, read, release, and refund escrows. It is intentionally lightweight: the contract manages canonical escrow state while actual fund movement may be handled off-chain or by a token client in a future iteration.
-
 Project Vision
-
-Enable a clear, auditable, and minimal trust-minimised escrow primitive on Stellar (Soroban) that developers can use as the building block for low-friction remittances and payment flows. The contract aims to be:
-
-Simple — easy to read, reason about, and test.
-
-Safe — typed errors and storage patterns that match Soroban v23.x best practices.
-
-Composable — designed so frontends or backend services can integrate easily and later upgrade to on-chain token locking/release.
 
 Key Features
 
-On-chain escrow records: stores id, sender, receiver, amount, and completed flag.
+Future Scope
 
-CRUD-style API (minimal):
+Contract Screenshot
+
+🔖 Project Title
+
+Stellar Mini Escrow — Soroban Smart Contract
+
+📝 Project Description
+
+This repository contains a compact Soroban smart contract that implements an on-chain escrow registry for a Stellar remittance prototype. The contract stores canonical escrow records — each with an id, sender, receiver, amount, and completed flag — and exposes simple operations to create, read, release, and refund escrows.
+The contract intentionally separates state from fund custody: it records authoritative escrow status on-chain, while movement of XLM/tokens can be handled by an integrating frontend or off-chain service for the prototype stage.
+
+🎯 Project Vision
+
+To provide an easy-to-understand, secure building block that developers can use to add trust-minimized escrow functionality to Stellar apps. The contract prioritizes:
+
+Simplicity — minimal surface area, readable code, easy tests.
+
+Safety — typed errors, stable storage patterns, and clear invariants.
+
+Composability — intended to be integrated with frontends or backends and later upgraded to fully on-chain token handling.
+
+⭐ Key Features
+
+On-chain escrow records
+Stores id, sender, receiver, amount, and completed in Soroban persistent storage.
+
+Minimal CRUD-style API
 
 create(id, sender, receiver, amount) — create a new escrow record.
 
-get(id) — read an escrow record (returns Option<Escrow>).
+get(id) — fetch escrow details (returns Option<Escrow>).
 
-release(id, caller) — mark escrow completed (caller must be sender).
+release(id, caller) — mark escrow completed (caller must be the sender).
 
-refund(id, caller) — mark escrow refunded/completed (caller must be sender).
+refund(id, caller) — mark escrow refunded/completed (caller must be the sender).
 
-Typed contract errors: uses #[contracterror] for clear failure modes (e.g., NotFound, AlreadyExists, NotSender).
+Typed contract errors
+Uses #[contracterror] for clear, machine-readable failure modes (e.g., NotFound, AlreadyExists, NotSender).
 
-Stable storage keys: escrow entries keyed by (symbol_short!("ESCROW"), id) for deterministic lookup.
+Deterministic storage keys
+Escrows keyed by a stable tuple such as (symbol_short!("ESCROW"), id) for straightforward lookup and indexing.
 
-Soroban v23.x compatibility: written to use the public storage and API patterns in soroban-sdk 23.x (e.g., env.storage().persistent(), symbol_short!, #[contracttype], #[contracterror]).
+Soroban v23.x compatibility
+Written against soroban-sdk 23.x best practices (persistent storage API, #[contracttype], #[contracterror], etc.).
 
-Future Scope
+🔮 Future Scope
 
-Enforce signer auth inside contract: replace the caller-param approach with Address::require_auth (or equivalent) so the contract itself enforces the signer rather than trusting a passed caller argument.
+On-chain auth enforcement — replace the caller-param pattern with Address::require_auth (or equivalent) so the contract enforces signer authenticity itself.
 
-On-chain token locking & transfers: integrate the Soroban token interface (TokenClient) so the contract can accept token deposits and release tokens directly — making escrows fully trustless.
+Token locking & release — integrate with Soroban TokenClient to accept deposits and release tokens fully on-chain, removing off-chain custody.
 
-Timeouts & dispute resolution: add time-based auto-refunds or dispute resolution multi-party flows (oracles/multisig).
+Timeouts & dispute resolution — implement time-based auto-refunds, multi-party arbitration, or oracle-based dispute handling.
 
-Events & indexing: emit structured events on create/release/refund and provide an off-chain indexer for fast frontend search and history.
+Events & indexing — emit structured events (create/release/refund) and provide an off-chain indexer for fast frontend queries.
 
-Access controls & roles: allow configurable roles (admin, arbiter) to support regulated payout flows or institutional usage.
+Access controls & roles — introduce admin/arbiter roles to support institutional flows.
 
-Security audits & fuzzing: include formal tests, property testing and third-party audit before any mainnet usage.
+Testing & security — add comprehensive unit tests, property tests, and pursue a security audit before any mainnet deployment.
 
+🖼️ Contract Screenshot
+
+![alt text](image.png)
