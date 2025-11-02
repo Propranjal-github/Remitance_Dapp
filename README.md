@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Project Title
 
-## Getting Started
+Cross-Border Remittance DApp
 
-First, run the development server:
+Project Description
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+This repository contains a minimal Soroban smart contract that implements an on-chain escrow registry for the Stellar Cross-Border Remittance DApp (testnet prototype).
+The contract stores simple escrow records (id, sender, receiver, amount, completed flag) and exposes functions to create, read, release, and refund escrows. It is intentionally lightweight: the contract manages canonical escrow state while actual fund movement may be handled off-chain or by a token client in a future iteration.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Project Vision
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Enable a clear, auditable, and minimal trust-minimised escrow primitive on Stellar (Soroban) that developers can use as the building block for low-friction remittances and payment flows. The contract aims to be:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Simple — easy to read, reason about, and test.
 
-## Learn More
+Safe — typed errors and storage patterns that match Soroban v23.x best practices.
 
-To learn more about Next.js, take a look at the following resources:
+Composable — designed so frontends or backend services can integrate easily and later upgrade to on-chain token locking/release.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Key Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+On-chain escrow records: stores id, sender, receiver, amount, and completed flag.
 
-## Deploy on Vercel
+CRUD-style API (minimal):
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+create(id, sender, receiver, amount) — create a new escrow record.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+get(id) — read an escrow record (returns Option<Escrow>).
+
+release(id, caller) — mark escrow completed (caller must be sender).
+
+refund(id, caller) — mark escrow refunded/completed (caller must be sender).
+
+Typed contract errors: uses #[contracterror] for clear failure modes (e.g., NotFound, AlreadyExists, NotSender).
+
+Stable storage keys: escrow entries keyed by (symbol_short!("ESCROW"), id) for deterministic lookup.
+
+Soroban v23.x compatibility: written to use the public storage and API patterns in soroban-sdk 23.x (e.g., env.storage().persistent(), symbol_short!, #[contracttype], #[contracterror]).
+
+Future Scope
+
+Enforce signer auth inside contract: replace the caller-param approach with Address::require_auth (or equivalent) so the contract itself enforces the signer rather than trusting a passed caller argument.
+
+On-chain token locking & transfers: integrate the Soroban token interface (TokenClient) so the contract can accept token deposits and release tokens directly — making escrows fully trustless.
+
+Timeouts & dispute resolution: add time-based auto-refunds or dispute resolution multi-party flows (oracles/multisig).
+
+Events & indexing: emit structured events on create/release/refund and provide an off-chain indexer for fast frontend search and history.
+
+Access controls & roles: allow configurable roles (admin, arbiter) to support regulated payout flows or institutional usage.
+
+Security audits & fuzzing: include formal tests, property testing and third-party audit before any mainnet usage.
+
