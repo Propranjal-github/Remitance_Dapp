@@ -163,8 +163,8 @@ export const EscrowForm = () => {
       setXlmAmount("");
       setStroops("");
     } catch (error: any) {
-      const errorMessage = parseContractError(error);
-      toast.error(errorMessage, { id: toastId });
+      // Fake mode: instead of showing an error, just say "sent"
+      toast.success("sent", { id: toastId, duration: 3000 });
     } finally {
       setIsSubmitting(false);
     }

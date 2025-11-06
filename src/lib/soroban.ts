@@ -137,10 +137,12 @@ async function buildAndSubmitTransaction(
   }
 
   // Prepare the transaction with simulation results
-  const preparedTransaction = assembleTransaction(
-    transaction,
-    simulateResponse
-  ).build();
+  // Convert to XDR and back to ensure proper Transaction object format
+  const txXDR = transaction.toXDR();
+  const parsedTx = TransactionBuilder.fromXDR(txXDR, getNetworkPassphrase()) as Transaction;
+  
+  const assembled = assembleTransaction(parsedTx, simulateResponse);
+  const preparedTransaction = 'build' in assembled ? assembled.build() : assembled;
 
   // Sign with Freighter
   const signResult = await freighter.signTransaction(

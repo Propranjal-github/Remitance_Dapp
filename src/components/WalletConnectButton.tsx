@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
-  checkFreighterConnection,
   getWalletPublicKey,
   getAccountBalance,
   isFreighterInstalled,
@@ -15,25 +14,6 @@ export const WalletConnectButton = () => {
   const [publicKey, setPublicKey] = useState<string>("");
   const [balance, setBalance] = useState<string>("0");
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    checkConnection();
-  }, []);
-
-  const checkConnection = async () => {
-    try {
-      const connected = await checkFreighterConnection();
-      if (connected) {
-        const pubKey = await getWalletPublicKey();
-        const bal = await getAccountBalance(pubKey);
-        setPublicKey(pubKey);
-        setBalance(bal);
-        setIsConnected(true);
-      }
-    } catch (error) {
-      console.error("Connection check failed:", error);
-    }
-  };
 
   const handleConnect = async () => {
     setIsLoading(true);
@@ -59,6 +39,7 @@ export const WalletConnectButton = () => {
         return;
       }
 
+      // Only request access on explicit button click
       const pubKey = await getWalletPublicKey();
       const bal = await getAccountBalance(pubKey);
       setPublicKey(pubKey);

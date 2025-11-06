@@ -1,7 +1,6 @@
 import { WalletConnectButton } from "@/components/WalletConnectButton";
 import { EscrowForm } from "@/components/EscrowForm";
 import { EscrowList } from "@/components/EscrowList";
-import { FreighterDiagnostic } from "@/components/FreighterDiagnostic";
 import { Shield, Lock, Zap } from "lucide-react";
 
 const Index = () => {
@@ -48,8 +47,6 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Freighter Diagnostic (dev only) */}
-        <FreighterDiagnostic />
 
         {/* Wallet Connection */}
         <div className="mb-8 flex justify-center">
